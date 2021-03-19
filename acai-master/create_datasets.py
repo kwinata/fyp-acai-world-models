@@ -147,7 +147,7 @@ def _load_car_racing():
     from tqdm import tqdm
     import png
     imgs = []
-    for f in tqdm(dirs[:5]):
+    for f in tqdm(dirs[:300]):  # limit because not enough memory
         data = np.load(os.path.join('training_data/', f))
         for img in data['obs']:
             img = img * 255
