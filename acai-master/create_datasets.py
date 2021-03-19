@@ -139,6 +139,22 @@ def _load_mnist():
     return splits
 
 
+def _load_car_racing():
+    import io
+    import os
+    dirs = os.listdir('training_data/')
+    import numpy as np
+    from tqdm import tqdm
+    import png
+    imgs = []
+    for f in tqdm(dirs[:5]):
+        data = np.load(os.path.join('training_data/', f))
+        for img in data['obs']:
+            img = img * 255
+            img = img.astype(int)
+            imgs.append(img)
+    return dict(train={'images': _encode_png(np.array(imgs)), 'labels': np.zeros(len(imgs), int)})
+
 def _int64_feature(value):
     return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
 
@@ -160,10 +176,11 @@ def _save_as_tfrecord(data, filename):
 
 
 LOADERS = [
-    ('mnist', _load_mnist),
-    ('cifar10', _load_cifar10),
-    ('svhn', _load_svhn),
-    ('celeba', _load_celeba)
+    ('car_racing', _load_car_racing),
+#    ('mnist', _load_mnist),
+#    ('cifar10', _load_cifar10),
+#    ('svhn', _load_svhn),
+#    ('celeba', _load_celeba)
 ]
 
 if __name__ == '__main__':
