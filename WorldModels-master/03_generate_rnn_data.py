@@ -26,7 +26,7 @@ def get_filelist(N):
 
     return filelist, N
 
-def encode_episode(vae, episode):
+def encode_episode(acai, episode):
 
     obs = episode['obs']
     action = episode['action']
@@ -36,7 +36,8 @@ def encode_episode(vae, episode):
     done = done.astype(int)  
     reward = np.where(reward>0, 1, 0) * np.where(done==0, 1, 0)
 
-    mu, log_var, _ = vae.encoder.predict(obs)
+    mu = acai.encode(obs)
+    log_var = np.full(mu.shape, -1000.0)
     
     initial_mu = mu[0, :]
     initial_log_var = log_var[0, :]
@@ -49,15 +50,7 @@ def main(args):
 
     N = args.N
 
-    vae = VAE()
-
-    try:
-      vae.set_weights('./vae/weights.h5')
-    except Exception as e:
-      print(e)
-      print("./vae/weights.h5 does not exist - ensure you have run 02_train_vae.py first")
-      raise
-
+    acai = ACAI()
 
     filelist, N = get_filelist(N)
 
@@ -71,7 +64,7 @@ def main(args):
       
         rollout_data = np.load(ROLLOUT_DIR_NAME + file)
 
-        mu, log_var, action, reward, done, initial_mu, initial_log_var = encode_episode(vae, rollout_data)
+        mu, log_var, action, reward, done, initial_mu, initial_log_var = encode_episode(acai, rollout_data)
 
         np.savez_compressed(SERIES_DIR_NAME + file, mu=mu, log_var=log_var, action = action, reward = reward, done = done)
         initial_mus.append(initial_mu)
