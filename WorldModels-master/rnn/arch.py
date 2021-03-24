@@ -11,7 +11,7 @@ from tensorflow.keras.optimizers import Adam
 
 import tensorflow as tf
 
-Z_DIM = 32
+Z_DIM = 64
 ACTION_DIM = 3
 
 HIDDEN_UNITS = 256

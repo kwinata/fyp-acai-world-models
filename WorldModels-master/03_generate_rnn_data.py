@@ -1,6 +1,6 @@
 #python 03_generate_rnn_data.py
 
-from vae.arch import VAE
+from acai.arch import ACAI
 import argparse
 import config
 import numpy as np
