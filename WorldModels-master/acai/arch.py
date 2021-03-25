@@ -10,8 +10,11 @@ import numpy as np
 CKPT_DIR = 'latent16scales5/tf/'
 CKPT_NAME = 'model.ckpt-48627'
 
+INPUT_DIM = (64, 64, 3)
+
 class ACAI:
     def __init__(self):
+        self.input_dim = INPUT_DIM
         g = tf.Graph()
         with g.as_default():
             imgs_tensor = tf1.placeholder(tf.int32, [None, 64, 64, 3], 'imgs_tensor')

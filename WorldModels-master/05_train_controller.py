@@ -17,7 +17,8 @@ import pickle
 import random
 
 from pympler.tracker import SummaryTracker
-
+from acai.arch import ACAI
+acai = ACAI()
 from model import make_model, simulate
 from es import CMAES, SimpleGA, OpenES, PEPG
 import argparse

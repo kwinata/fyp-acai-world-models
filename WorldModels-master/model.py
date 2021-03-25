@@ -16,7 +16,7 @@ import config
 from gym.wrappers import Monitor
 
 from env import make_env
-from vae.arch import VAE
+from acai.arch import ACAI
 from rnn.arch import RNN
 from controller.arch import Controller
 
@@ -30,22 +30,21 @@ ADD_NOISE = False
 
 def make_model():
 
-  vae = VAE()
-  vae.set_weights('./vae/weights.h5')
+  acai = ACAI()
 
   rnn = RNN()
   rnn.set_weights('./rnn/weights.h5')
 
   controller = Controller()
 
-  model = Model(controller, vae, rnn)
+  model = Model(controller, acai, rnn)
   return model
 
 class Model:
-  def __init__(self, controller, vae, rnn):
+  def __init__(self, controller, acai, rnn):
 
-    self.input_size = vae.input_dim
-    self.vae = vae
+    self.input_size = acai.input_dim
+    self.acai = acai
     self.rnn = rnn
 
     self.output_noise = controller.output_noise
@@ -155,8 +154,8 @@ class Model:
     self.cell_values = np.zeros(self.rnn.hidden_units) 
 
   def update(self, obs, t):
-    if obs.shape == self.vae.input_dim:
-      return self.vae.encoder.predict(np.array([obs]))[2][0]
+    if obs.shape == self.acai.input_dim:
+        return self.acai.encode(np.array([obs]))[0]  # remove the [2] because VAE has 3 return value: z_mean, log_var, z
     else:
       return obs
 
@@ -211,7 +210,7 @@ def simulate(model, num_episode=5, seed=-1, max_len=-1, generate_data_mode = Fal
     for t in range(max_episode_length):
 
       # print(f'Timestep {t}')
-      if obs.shape == model.vae.input_dim: ### running in real environment
+      if obs.shape == model.acai.input_dim: ### running in real environment
         obs = config.adjust_obs(obs)
         reward = config.adjust_reward(reward)
 
